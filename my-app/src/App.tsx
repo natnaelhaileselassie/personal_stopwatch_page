@@ -19,6 +19,17 @@ function formatStopwatch(ms: number): string {
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${pad(hundredths)}`
 }
 
+function formatTitle(ms: number): string {
+  const totalSeconds = Math.floor(ms / 1000)
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+  const pad = (n: number) => n.toString().padStart(2, '0')
+  return hours > 0
+    ? `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`
+    : `${pad(minutes)}:${pad(seconds)}`
+}
+
 function formatCountdown(ms: number): string {
   const clamped = Math.max(0, ms)
   const totalSeconds = Math.ceil(clamped / 1000)
@@ -46,6 +57,11 @@ function Stopwatch() {
     }, 50)
     return () => window.clearInterval(id)
   }, [running])
+
+  const title = formatTitle(elapsed)
+  useEffect(() => {
+    document.title = `${title} — Stopwatch`
+  }, [title])
 
   const toggle = () => {
     if (running) {
