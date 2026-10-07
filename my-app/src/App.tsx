@@ -1,121 +1,175 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+const POMODORO_PRESETS = {
+  focus: 25 * 60 * 1000,
+  shortBreak: 5 * 60 * 1000,
+  longBreak: 15 * 60 * 1000,
+} as const
+
+type PomodoroMode = keyof typeof POMODORO_PRESETS
+
+function formatStopwatch(ms: number): string {
+  const totalSeconds = Math.floor(ms / 1000)
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+  const hundredths = Math.floor((ms % 1000) / 10)
+  const pad = (n: number, len = 2) => n.toString().padStart(len, '0')
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${pad(hundredths)}`
+}
+
+function formatCountdown(ms: number): string {
+  const clamped = Math.max(0, ms)
+  const totalSeconds = Math.ceil(clamped / 1000)
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  const pad = (n: number) => n.toString().padStart(2, '0')
+  return `${pad(minutes)}:${pad(seconds)}`
+}
+
+function toDecimalMinutes(ms: number): string {
+  return (ms / 60000).toFixed(2)
+}
+
+function Stopwatch() {
+  const [elapsed, setElapsed] = useState(0)
+  const [running, setRunning] = useState(false)
+  const startRef = useRef<number>(0)
+  const baseRef = useRef<number>(0)
+
+  useEffect(() => {
+    if (!running) return
+    startRef.current = performance.now()
+    const id = window.setInterval(() => {
+      setElapsed(baseRef.current + (performance.now() - startRef.current))
+    }, 50)
+    return () => window.clearInterval(id)
+  }, [running])
+
+  const toggle = () => {
+    if (running) {
+      baseRef.current = baseRef.current + (performance.now() - startRef.current)
+      setElapsed(baseRef.current)
+      setRunning(false)
+    } else {
+      setRunning(true)
+    }
+  }
+
+  const reset = () => {
+    setRunning(false)
+    baseRef.current = 0
+    setElapsed(0)
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
+    <div className="card">
+      <h2>Stopwatch</h2>
+      <div className="display">{formatStopwatch(elapsed)}</div>
+      <div className="decimal">
+        <span className="decimal-label">Decimal minutes</span>
+        <span className="decimal-value">{toDecimalMinutes(elapsed)}</span>
+      </div>
+      <div className="controls">
+        <button type="button" className="primary" onClick={toggle}>
+          {running ? 'Pause' : elapsed === 0 ? 'Start' : 'Resume'}
         </button>
-      </section>
+        <button type="button" onClick={reset} disabled={elapsed === 0 && !running}>
+          Reset
+        </button>
+      </div>
+    </div>
+  )
+}
 
-      <div className="ticks"></div>
+function Pomodoro() {
+  const [mode, setMode] = useState<PomodoroMode>('focus')
+  const [remaining, setRemaining] = useState(POMODORO_PRESETS.focus)
+  const [running, setRunning] = useState(false)
+  const endRef = useRef<number>(0)
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+  useEffect(() => {
+    if (!running) return
+    endRef.current = performance.now() + remaining
+    const id = window.setInterval(() => {
+      const left = endRef.current - performance.now()
+      if (left <= 0) {
+        setRemaining(0)
+        setRunning(false)
+        window.clearInterval(id)
+        return
+      }
+      setRemaining(left)
+    }, 100)
+    return () => window.clearInterval(id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [running])
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+  const switchMode = (next: PomodoroMode) => {
+    setMode(next)
+    setRunning(false)
+    setRemaining(POMODORO_PRESETS[next])
+  }
+
+  const toggle = () => {
+    if (remaining <= 0) {
+      setRemaining(POMODORO_PRESETS[mode])
+      setRunning(true)
+      return
+    }
+    setRunning((r) => !r)
+  }
+
+  const reset = () => {
+    setRunning(false)
+    setRemaining(POMODORO_PRESETS[mode])
+  }
+
+  const done = remaining <= 0
+
+  return (
+    <div className="card">
+      <h2>Pomodoro</h2>
+      <div className="tabs">
+        {(Object.keys(POMODORO_PRESETS) as PomodoroMode[]).map((m) => (
+          <button
+            key={m}
+            type="button"
+            className={m === mode ? 'tab active' : 'tab'}
+            onClick={() => switchMode(m)}
+          >
+            {m === 'focus' ? 'Focus' : m === 'shortBreak' ? 'Short break' : 'Long break'}
+          </button>
+        ))}
+      </div>
+      <div className={done ? 'display done' : 'display'}>
+        {done ? 'Time!' : formatCountdown(remaining)}
+      </div>
+      <div className="controls">
+        <button type="button" className="primary" onClick={toggle}>
+          {running ? 'Pause' : done ? 'Restart' : 'Start'}
+        </button>
+        <button type="button" onClick={reset}>
+          Reset
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <main className="app">
+      <header className="header">
+        <h1>Stopwatch & Pomodoro</h1>
+        <p>Track elapsed time with decimal minutes while a pomodoro runs alongside.</p>
+      </header>
+      <div className="grid">
+        <Stopwatch />
+        <Pomodoro />
+      </div>
+    </main>
   )
 }
 
