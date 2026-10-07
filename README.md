@@ -40,3 +40,8 @@ npm run build    # type-check and produce a production build
 npm run lint     # run ESLint
 npm run preview  # preview the production build locally
 ```
+
+## Screenshot of Page
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/0007bb2e-99dd-4120-b072-4b5201b76429" />
+
