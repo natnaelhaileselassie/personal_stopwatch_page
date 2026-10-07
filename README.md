@@ -12,9 +12,9 @@ Personal stopwatch page so I can track hours spent at work. Includes a live stop
 
 ### Languages
 - **TypeScript** — all application logic (`src/*.tsx`), typed with strict `tsconfig`
+- **JavaScript** — ESLint config (`eslint.config.js`) and the compiled output produced by `npm run build`
 - **HTML** — single entry point in `my-app/index.html`
-- **CSS** — plain CSS modules in `src/index.css` and `src/App.css` (no preprocessor)
-- **JSON** — package manifests and `tsconfig` files
+- **CSS** — plain CSS in `src/index.css` and `src/App.css` (no preprocessor)
 
 ### Frameworks & libraries
 - **React 19** (`react`, `react-dom`) — UI library; the app uses functional components with `useState`, `useEffect`, and `useRef`
