@@ -40,7 +40,7 @@ function formatCountdown(ms: number): string {
 }
 
 function toDecimalMinutes(ms: number): string {
-  return (ms / 1000).toFixed(2)
+  return (ms / 60000).toFixed(2)
 }
 
 function Stopwatch() {
