@@ -39,8 +39,8 @@ function formatCountdown(ms: number): string {
   return `${pad(minutes)}:${pad(seconds)}`
 }
 
-function toDecimalMinutes(ms: number): string {
-  return (ms / 60000).toFixed(2)
+function toDecimalHours(ms: number): string {
+  return (ms / 3600000).toFixed(2)
 }
 
 function Stopwatch() {
@@ -84,8 +84,8 @@ function Stopwatch() {
       <h2>Stopwatch</h2>
       <div className="display">{formatStopwatch(elapsed)}</div>
       <div className="decimal">
-        <span className="decimal-label">Decimal minutes</span>
-        <span className="decimal-value">{toDecimalMinutes(elapsed)}</span>
+        <span className="decimal-label">Decimal hours</span>
+        <span className="decimal-value">{toDecimalHours(elapsed)}</span>
       </div>
       <div className="controls">
         <button type="button" className="primary" onClick={toggle}>

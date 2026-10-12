@@ -1,11 +1,11 @@
 # personal_stopwatch_page
 
-Personal stopwatch page so I can track hours spent at work. Includes a live stopwatch (with automatic decimal-minute conversion) and an independent pomodoro timer that can run alongside it.
+Personal stopwatch page so I can track hours spent at work. Includes a live stopwatch (with automatic decimal-hour conversion) and an independent pomodoro timer that can run alongside it.
 
 ## Features
 
 - Stopwatch with start / pause / resume / reset
-- Live conversion of elapsed time to decimal minutes (e.g. `90s` → `1.50`)
+- Live conversion of elapsed time to decimal hours (e.g. `30m` → `0.50`)
 - Pomodoro timer with Focus (25m), Short break (5m), and Long break (15m) presets, running concurrently with the stopwatch
 
 ## Tech stack
