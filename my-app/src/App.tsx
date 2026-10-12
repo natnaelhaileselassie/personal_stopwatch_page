@@ -179,7 +179,7 @@ function App() {
     <main className="app">
       <header className="header">
         <h1>Stopwatch & Pomodoro</h1>
-        <p>Track elapsed time with decimal minutes while a pomodoro runs alongside.</p>
+        <p>Track elapsed time with decimal hours while a pomodoro runs alongside.</p>
       </header>
       <div className="grid">
         <Stopwatch />
